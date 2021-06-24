@@ -14,11 +14,12 @@ namespace ConsoleUI
         {
             Console.WriteLine("Welcome to the Party!!");
             GetUserInfo();
+            MultiLineAnimation();
             PrintGuestsName();
-            //  PrintWinner();
+            PrintWinner();
         }
 
-        //Start writing your code here
+// private static variables to be accessed throughout the entire class (Added Regex for input validation)
         private static Dictionary<int, string> guests = new Dictionary<int, string>();
         private static int min = 1000;
         private static int max = 9999;
@@ -26,6 +27,7 @@ namespace ConsoleUI
         private static Random _rdm = new Random();
         private static Regex rgx = new Regex("[^a-zA-Z]");
 
+// Created a Regex method to trim and make inputs lowercase
         private static string Rgx(string input)
         {
             string user = input.Trim();
@@ -39,9 +41,10 @@ namespace ConsoleUI
             string user = Console.ReadLine();
             user = Rgx(user);
 
-            while (string.IsNullOrEmpty(user))
+            while (string.IsNullOrEmpty(user) || guests.ContainsValue(user))
             {
-                Console.WriteLine("Please enter a name:");
+                Console.WriteLine("Sorry, it looks like that name is either taken or invalid.\nPlease enter a name to try again:");
+                user = Console.ReadLine();
                 user = Rgx(user);
             }
 
@@ -52,8 +55,8 @@ namespace ConsoleUI
         {
             string name;
             string otherGuest;
-            string prompt = "Please enter your name:";
-            string query = "Do you want to add another name?";
+            string prompt = "\nPlease enter a name:";
+            string query = "\nDo you want to add another name?";
 
             do
             {
@@ -86,21 +89,25 @@ namespace ConsoleUI
             }
         }
 
-        //private static GetRaffleNumber(Dictionary<int, string> people)
-        //{
-        //    int randomTicket;
+        private static int GetRaffleNumber(Dictionary<int, string> people)
+        {
+            int index = _rdm.Next(guests.Count);
+            int winnerNumber = guests.Keys.ElementAt(index);
 
-        //    foreach (KeyValuePair<int, string> ticket in guests)
-        //    {
+            return winnerNumber;
+        }
 
-        //    }
-        //}
+        private static void PrintWinner()
+        {
+            int winnerNumber = GetRaffleNumber(guests);
+            string winnerName = guests[winnerNumber];
 
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"\nThe Winner is: {winnerName}, with the winning ticket #{winnerNumber}!!\nPlease come forward to collect your prize!");
+        }
 
-
-
-        /*
-                static void MultiLineAnimation() // Credit: https://www.michalbialecki.com/2018/05/25/how-to-make-you-console-app-look-cool/
+// Animation provided by class, credit: https://www.michalbialecki.com/2018/05/25/how-to-make-you-console-app-look-cool/
+        static void MultiLineAnimation()
                 {
                     var counter = 0;
                     for (int i = 0; i < 30; i++)
@@ -147,6 +154,6 @@ namespace ConsoleUI
                         Thread.Sleep(200);
                     }
 
-                } */
+                } 
     }
 }
